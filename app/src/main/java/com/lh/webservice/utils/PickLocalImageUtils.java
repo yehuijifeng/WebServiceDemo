@@ -8,7 +8,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 
 /**
- * Created by 权兴 on 2015/9/17 12:42.
+ * 通过系统相册的回调获得图片的url
  */
 public class PickLocalImageUtils {
 

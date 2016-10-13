@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
             switch (requestCode) {
                 case PickLocalImageUtils.CODE_FOR_ALBUM:
                     if (data == null) return;
+                    //通过系统相册的回调获得图片的url
                     imageLocalUrl = PickLocalImageUtils.getPath(data.getData(), getContentResolver());
                     break;
             }
@@ -70,17 +71,33 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * 处理图片
+     *
+     * @param imagePath
+     */
     private void handlePostImage(String imagePath) {
         if (TextUtils.isEmpty(imagePath)) return;
+        //控制大小
         Bitmap bitmap = BitmapUtil.decodeSampledBitmapFromFile(imagePath, 800, 600);
+        //图片另存为新的地址
         imageLocalUrl = PHOTO_SAVE_PATH + DateUtils.format(System.currentTimeMillis(), "'IMG'_yyyyMMddHHmmss") + ".jpg";
+        //将当前图片的网络地址和本地地址保存起来
         imageurls.put("http://192.168.1.1:8080/icon.jpg", imageLocalUrl);
+        //将图片保存到新的地址
         BitmapUtil.saveBitmap(bitmap, imageLocalUrl, 50);
         if (bitmap != null) {
             insertIntoEditText(getBitmapMime(bitmap, imageLocalUrl));
         }
     }
 
+    /**
+     * 将图片变成可变的文本
+     *
+     * @param pic
+     * @param imagePath
+     * @return
+     */
     private SpannableString getBitmapMime(Bitmap pic, String imagePath) {
         SpannableString ss = new SpannableString(imagePath);
         BitmapDrawable drawable;
@@ -100,10 +117,14 @@ public class MainActivity extends AppCompatActivity {
         return ss;
     }
 
+    /**
+     * 从view中加载bitmap对象
+     *
+     * @param view
+     * @return
+     */
     public BitmapDrawable loadBitmapFromView(ImageView view) {
-        if (view == null) {
-            return null;
-        }
+        if (view == null) return null;
         int spec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
         view.measure(spec, spec);
         view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
@@ -115,6 +136,11 @@ public class MainActivity extends AppCompatActivity {
         return new BitmapDrawable(getResources(), screenshot);
     }
 
+    /**
+     * 插入编辑脚本
+     *
+     * @param ss
+     */
     private void insertIntoEditText(SpannableString ss) {
         Editable et = test_edit.getText();// 先获取Edittext中的内容
         int start = test_edit.getSelectionStart();
@@ -139,17 +165,111 @@ public class MainActivity extends AppCompatActivity {
         contentStr.replace("[图片长传失败]", "");
     }
 
+    /**
+     * 显示图文
+     *
+     * @param content
+     */
     private void showText(String content) {
         if (!TextUtils.isEmpty(content)) {
             CImageGetter cImageGetter = new CImageGetter(this, test_edit, 2048);
+            //本地图片
             Html.ImageGetter imageGetter = new Html.ImageGetter() {
                 @Override
                 public Drawable getDrawable(String source) {
-                    return null;
+                    // 获取本地图片
+                    Drawable drawable = Drawable.createFromPath(source);
+                    // 必须设为图片的边际,不然TextView显示不出图片
+                    drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+                    // 将其返回
+                    return drawable;
                 }
             };
             cImageGetter.setSource(content);
             test_btn.setText(Html.fromHtml(content, imageGetter, null));
+        }
+    }
+
+    /**
+     * 示例
+     *
+     * mTvOne = (TextView) this.findViewById(R.id.tv_img_label_one);
+     String htmlOne = "本地图片测试：" + "<img src='/mnt/sdcard/imgLabel.jpg'>";
+     mTvOne.setText(Html.fromHtml(htmlOne, new LocalImageGetter(), null));
+
+     mTvTwo = (TextView) this.findViewById(R.id.tv_img_label_two);
+     String htmlTwo = "项目图片测试：" + "<img src=""+R.drawable.imagepro+"">";
+     mTvTwo.setText(Html.fromHtml(htmlTwo, new ProImageGetter(), null));
+
+
+     mTvThree = (TextView) this.findViewById(R.id.tv_img_label_three);
+     mImageGetter = new NetworkImageGetter();
+     mTvThree.setText(Html.fromHtml(htmlThree, mImageGetter, null));
+     }
+     * */
+
+    /**
+     * 本地图片
+     *
+     * @author Susie
+     */
+    private final class LocalImageGetter implements Html.ImageGetter {
+
+        @Override
+        public Drawable getDrawable(String source) {
+            // 获取本地图片
+            Drawable drawable = Drawable.createFromPath(source);
+            // 必须设为图片的边际,不然TextView显示不出图片
+            drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+            // 将其返回
+            return drawable;
+        }
+    }
+
+    /**
+     * 项目资源图片
+     *
+     * @author Susie
+     */
+    private final class ProImageGetter implements Html.ImageGetter {
+
+        @Override
+        public Drawable getDrawable(String source) {
+            // 获取到资源id
+            int id = Integer.parseInt(source);
+            Drawable drawable = getResources().getDrawable(id);
+            drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+            return drawable;
+        }
+    }
+
+    /**
+     * 网络图片
+     *
+     * @author Susie
+     */
+    private final class NetworkImageGetter implements Html.ImageGetter {
+
+        @Override
+        public Drawable getDrawable(String source) {
+
+            Drawable drawable = null;
+//            // 封装路径
+//            File file = new File(Environment.getExternalStorageDirectory(), picName);
+//            // 判断是否以http开头
+//            if(source.startsWith("http")) {
+//                // 判断路径是否存在
+//                if(file.exists()) {
+//                    // 存在即获取drawable
+//                    drawable = Drawable.createFromPath(file.getAbsolutePath());
+//                    drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+//                } else {
+//                    // 不存在即开启异步任务加载网络图片
+//                    AsyncLoadNetworkPic networkPic = new AsyncLoadNetworkPic();
+//                    networkPic.execute(source);
+//                }
+//            }
+            return drawable;
         }
     }
 

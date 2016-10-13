@@ -245,4 +245,6 @@ public class CImageGetter implements ImageGetter {
             drawable.draw(canvas);
         }
     }
+
+
 }
