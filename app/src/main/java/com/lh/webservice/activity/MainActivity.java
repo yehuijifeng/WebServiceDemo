@@ -21,10 +21,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.lh.webservice.R;
-import com.lh.webservice.utils.BitmapUtil;
-import com.lh.webservice.utils.CImageGetter;
-import com.lh.webservice.utils.DateUtils;
-import com.lh.webservice.utils.PickLocalImageUtils;
+import com.lh.webservice.utils.textutils.BitmapUtil;
+import com.lh.webservice.utils.textutils.CImageGetter;
+import com.lh.webservice.utils.textutils.DateUtils;
+import com.lh.webservice.utils.textutils.PickLocalImageUtils;
 
 import java.util.HashMap;
 import java.util.Map;

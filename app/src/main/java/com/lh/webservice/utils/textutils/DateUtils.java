@@ -1,4 +1,4 @@
-package com.lh.webservice.utils;
+package com.lh.webservice.utils.textutils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

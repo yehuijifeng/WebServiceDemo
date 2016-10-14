@@ -1,4 +1,4 @@
-package com.lh.webservice.utils;
+package com.lh.webservice.utils.textutils;
 
 import android.app.Activity;
 import android.content.ContentResolver;

@@ -3,7 +3,7 @@
  * com.alsfox.lab139.utils
  * 2015
  */
-package com.lh.webservice.utils;
+package com.lh.webservice.utils.textutils;
 
 import java.security.MessageDigest;
 

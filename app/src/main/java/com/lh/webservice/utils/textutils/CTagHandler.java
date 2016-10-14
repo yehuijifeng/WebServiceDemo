@@ -3,7 +3,7 @@
  * com.alsfox.lab139.utils
  * 2015
  */
-package com.lh.webservice.utils;
+package com.lh.webservice.utils.textutils;
 
 import android.content.Context;
 import android.text.Editable;
