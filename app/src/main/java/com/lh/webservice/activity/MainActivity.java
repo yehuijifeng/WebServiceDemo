@@ -1,4 +1,4 @@
-package com.lh.webservice;
+package com.lh.webservice.activity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.lh.webservice.R;
 import com.lh.webservice.utils.BitmapUtil;
 import com.lh.webservice.utils.CImageGetter;
 import com.lh.webservice.utils.DateUtils;
